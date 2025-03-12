@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generic Quiz Template</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    #quiz-section {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .question {
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      padding: 15px;
+    }
+
+    .question p {
+      margin: 0 0 10px;
+      font-weight: bold;
+    }
+
+    .correct {
+      color: green;
+      font-weight: bold;
+    }
+
+    .incorrect {
+      color: red;
+      font-weight: bold;
+    }
+
+    .explanation {
+      font-size: 0.9em;
+      margin-top: 5px;
+      color: blue;
+      font-style: italic;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #score-section {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Quiz Template</h1>
+<h2>Test Your Knowledge!</h2>
+<div id="quiz-section"></div>
+
+<button onclick="checkAnswers()">Submit Answers</button>
+
+<div id="score-section"></div>
+
+<script>
+// Generic array to hold questions, options, and answers
+const questions = [
+  {
+    question: "Example 1: What is 2 + 2?",
+    options: ["3", "4", "5", "6"],
+    answer: ["4"],
+    explanation: "2 + 2 equals 4."
+  },
+  {
+    question: "Example 2: Select all prime numbers. (Select TWO.)",
+    options: ["4", "5", "6", "7"],
+    answer: ["5", "7"],
+    explanation: "Prime numbers are integers greater than 1 that are divisible only by 1 and themselves. In this case, 5 and 7 are prime."
+  }
+];
+
+// Function to create the quiz dynamically
+function createQuiz(questions, sectionId) {
+  const quizDiv = document.getElementById(sectionId);
+
+  questions.forEach((q, index) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.classList.add('question');
+    questionDiv.id = `question-${index}`;
+
+    const questionText = document.createElement('p');
+    questionText.innerText = q.question;
+    questionDiv.appendChild(questionText);
+
+    q.options.forEach(option => {
+      const optionDiv = document.createElement('div');
+      const optionInput = document.createElement('input');
+      const isMultiAnswer = q.answer.length > 1;
+
+      optionInput.type = isMultiAnswer ? 'checkbox' : 'radio';
+      optionInput.name = `question${index}`;
+      optionInput.value = option;
+
+      const optionLabel = document.createElement('label');
+      optionLabel.innerText = option;
+
+      optionDiv.appendChild(optionInput);
+      optionDiv.appendChild(optionLabel);
+      questionDiv.appendChild(optionDiv);
+    });
+
+    quizDiv.appendChild(questionDiv);
+  });
+}
+
+// Generate the quiz
+createQuiz(questions, 'quiz-section');
+
+// Function to check answers and display results
+function checkAnswers() {
+  let correctCount = 0;
+
+  questions.forEach((q, index) => {
+    const questionDiv = document.getElementById(`question-${index}`);
+    const selectedOptions = Array.from(document.querySelectorAll(`input[name=question${index}]:checked`))
+      .map(input => input.value);
+    const resultText = document.createElement('p');
+
+    // Clear previous feedback
+    const existingFeedback = questionDiv.querySelectorAll('.correct, .incorrect, .explanation');
+    existingFeedback.forEach(feedback => feedback.remove());
+
+    // Check if the selected answers are correct
+    const isCorrect = q.answer.every(ans => selectedOptions.includes(ans)) && selectedOptions.length === q.answer.length;
+
+    if (isCorrect) {
+      correctCount++;
+      resultText.innerText = 'Correct!';
+      resultText.classList.add('correct');
+      const explanationText = document.createElement('p');
+      explanationText.innerText = `Explanation: ${q.explanation}`;
+      explanationText.classList.add('explanation');
+      questionDiv.appendChild(resultText);
+      questionDiv.appendChild(explanationText);
+    } else {
+      resultText.innerText = 'Incorrect!';
+      resultText.classList.add('incorrect');
+      questionDiv.appendChild(resultText);
+    }
+  });
+
+  const totalQuestions = questions.length;
+  const missedCount = totalQuestions - correctCount;
+  const percentage = ((correctCount / totalQuestions) * 100).toFixed(2);
+  let grade;
+
+  // Assign grade
+  if (percentage >= 90) {
+    grade = "A";
+  } else if (percentage >= 80) {
+    grade = "B";
+  } else if (percentage >= 70) {
+    grade = "C";
+  } else if (percentage >= 60) {
+    grade = "D";
+  } else {
+    grade = "F";
+  }
+
+  // Popup alert for number of correct answers
+  alert(`You got ${correctCount} out of ${totalQuestions} questions correct!`);
+
+  // Display results
+  const scoreDiv = document.getElementById('score-section');
+  scoreDiv.innerHTML = `
+    <h3>Quiz Results</h3>
+    <p>Correct Answers: ${correctCount}</p>
+    <p>Missed Answers: ${missedCount}</p>
+    <p>Percentage: ${percentage}%</p>
+    <p>Grade: ${grade}</p>
+  `;
+}
+</script>
+
+</body>
+</html>
