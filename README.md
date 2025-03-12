@@ -1,3 +1,4 @@
+![GUI](https://github.com/user-attachments/assets/68b01742-1de9-496b-8cfd-3033e76a44d9)
 # Generic Quiz Template
 
 This repository contains a reusable and dynamic quiz template built with HTML and JavaScript. It allows users to create interactive quizzes by simply updating the provided `questions` array.
